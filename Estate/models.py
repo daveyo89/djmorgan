@@ -2,13 +2,13 @@ from django.contrib.auth.models import User
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point
 from django.utils.html import mark_safe
-from django.db.models.signals import post_save
 from django.core.files.storage import FileSystemStorage
-from django.dispatch import receiver
 from Morgan.settings import MEDIA_ROOT, MEDIA_URL
+from dotenv import load_dotenv
 
 fs = FileSystemStorage(location=MEDIA_ROOT)
 
+load_dotenv()
 HEATING_CHOICES = (
     ('cirkó', 'Gáz(cirkó)'),
     ('központi', 'Központi'),
@@ -54,7 +54,6 @@ class RealEstate(models.Model):
     price = models.PositiveIntegerField(null=False, default=0)
     level = models.PositiveIntegerField(null=True, default=0)
     heating = models.CharField(choices=HEATING_CHOICES, max_length=50, null=True, default='')
-    favorite = models.BooleanField(null=True, default=False)
 
     def get_images(self):
         images = RealEstateImages.objects.filter(estate=self)
@@ -76,12 +75,11 @@ class RealEstateImages(models.Model):
         return self.image.url
 
 
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
+class Liked(models.Model):
+    what = models.ForeignKey(RealEstate, on_delete=models.CASCADE)
+    to_who = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    when = models.DateTimeField(auto_now_add=True)
+    returned = models.BooleanField(null=True, default=False)
 
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()
+    class Meta:
+        unique_together = ('what', 'to_who')

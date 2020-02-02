@@ -5,10 +5,8 @@ from Estate import views
 router = DefaultRouter()
 router.register(r'estates', views.EstateViewSet)
 router.register(r'profiles', views.ProfileViewSet)
-
+router.register(r'likes', views.LikedViewset)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('api/v1/', include('likes.api.urls')),
-
 ]

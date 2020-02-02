@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Profile, RealEstate, RealEstateImages
+from .models import Profile, RealEstate, RealEstateImages, Liked
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -20,11 +20,17 @@ class EstateSerializer(serializers.ModelSerializer):
 
 
 class ProfileSerializer(serializers.ModelSerializer):
-    user = serializers.HyperlinkedIdentityField(view_name='profile-detail', read_only=True)
+    user = serializers.HyperlinkedIdentityField(view_name='profile-detail')
 
     # estate = EstateSerializer(source='get_estate', many=True, required=False)
 
     class Meta:
         model = Profile
-        fields = ['user']
+        fields = '__all__'
         depth = 1
+
+
+class LikedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Liked
+        fields = '__all__'

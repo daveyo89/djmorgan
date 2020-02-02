@@ -2,3 +2,4 @@
 /Morgan/media/
 .idea
 db.sqlite3
+/Estate/choices.env
