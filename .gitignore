@@ -1,0 +1,4 @@
+/Morgan/.env
+/Morgan/media/
+.idea
+db.sqlite3
