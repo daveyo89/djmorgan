@@ -2,18 +2,13 @@ from django.contrib.auth.models import User
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point
 from django.utils.html import mark_safe
-from django.db.models.signals import post_save
 from django.core.files.storage import FileSystemStorage
-from django.dispatch import receiver
-from pygments.lexers import get_all_lexers
-from pygments.styles import get_all_styles
 from Morgan.settings import MEDIA_ROOT, MEDIA_URL
+from dotenv import load_dotenv
 
 fs = FileSystemStorage(location=MEDIA_ROOT)
-LEXERS = [item for item in get_all_lexers() if item[1]]
-LANGUAGE_CHOICES = sorted([(item[1][0], item[0]) for item in LEXERS])
-STYLE_CHOICES = sorted([(item, item) for item in get_all_styles()])
 
+load_dotenv()
 HEATING_CHOICES = (
     ('cirkó', 'Gáz(cirkó)'),
     ('központi', 'Központi'),
@@ -46,25 +41,6 @@ class Profile(models.Model):
         return self.user.username
 
 
-class Favorite(models.Model):
-    owner = models.ForeignKey(Profile, related_name='favorites', on_delete=models.CASCADE)
-    created_on = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.created_on
-
-
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
-
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()
-
-
 class RealEstate(models.Model):
     owner = models.OneToOneField(Profile, on_delete=models.DO_NOTHING)
     created = models.DateTimeField(auto_now_add=True)
@@ -78,7 +54,6 @@ class RealEstate(models.Model):
     price = models.PositiveIntegerField(null=False, default=0)
     level = models.PositiveIntegerField(null=True, default=0)
     heating = models.CharField(choices=HEATING_CHOICES, max_length=50, null=True, default='')
-    favorite = models.BooleanField(null=True, default=False)
 
     def get_images(self):
         images = RealEstateImages.objects.filter(estate=self)
@@ -98,3 +73,13 @@ class RealEstateImages(models.Model):
 
     def __str__(self):
         return self.image.url
+
+
+class Liked(models.Model):
+    what = models.ForeignKey(RealEstate, on_delete=models.CASCADE)
+    to_who = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    when = models.DateTimeField(auto_now_add=True)
+    returned = models.BooleanField(null=True, default=False)
+
+    class Meta:
+        unique_together = ('what', 'to_who')

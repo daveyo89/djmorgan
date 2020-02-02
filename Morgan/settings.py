@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Estate.apps.EstateConfig',
     'rest_framework',
-    'likes',
     'django.contrib.gis',
 ]
 
@@ -71,12 +70,6 @@ TEMPLATES = [
         },
     },
 ]
-
-LIKE_MODELS = {
-    "Estate.RealEstate": {
-        'serializer': 'article.api.serializers.EstateSerializer'
-    },
-}
 
 WSGI_APPLICATION = 'Morgan.wsgi.application'
 
