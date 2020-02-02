@@ -16,7 +16,7 @@ HEATING_CHOICES = (
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, unique=True, on_delete=models.CASCADE)
     profile_image = models.ImageField(storage=fs, default='default.jpg')
 
     def image_tag(self):
@@ -32,6 +32,9 @@ class Profile(models.Model):
     city = models.CharField(max_length=50, null=True)
     ip_address = models.GenericIPAddressField(null=True)
     ip_location = models.PointField(null=True, blank=True)
+
+    class Meta:
+        unique_together = (('user', 'ip_address'),('user', 'address'))
 
     def get_estate(self):
         estate = RealEstate.objects.filter(owner=self)

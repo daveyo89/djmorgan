@@ -5,7 +5,7 @@ from Estate import views
 router = DefaultRouter()
 router.register(r'estates', views.EstateViewSet)
 router.register(r'profiles', views.ProfileViewSet)
-router.register(r'likes', views.LikedViewset)
+router.register(r'likes', views.LikedViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

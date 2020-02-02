@@ -1,6 +1,4 @@
-from rest_framework import permissions, renderers, viewsets
-from rest_framework.decorators import action
-from rest_framework.response import Response
+from rest_framework import permissions, viewsets
 from Estate.permissions import IsOwnerOrReadOnly, IsMyLike
 from Estate.models import Profile, RealEstate, Liked
 from Estate.serializers import ProfileSerializer, EstateSerializer, LikedSerializer
@@ -25,7 +23,7 @@ class EstateViewSet(viewsets.ModelViewSet):
         serializer.save(owner=self.request.user)
 
 
-class LikedViewset(viewsets.ModelViewSet):
+class LikedViewSet(viewsets.ModelViewSet):
     queryset = Liked.objects.all()
     serializer_class = LikedSerializer
     permission_classes = [

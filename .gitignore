@@ -5,3 +5,5 @@ db.sqlite3
 /Estate/choices.env
 /venv/
 /Estate/migrations/
+Estate/__pycache__
+Morgan/__pycache__
